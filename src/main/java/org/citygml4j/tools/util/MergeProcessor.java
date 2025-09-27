@@ -34,6 +34,7 @@ import org.citygml4j.tools.io.FileHelper;
 import org.citygml4j.tools.io.InputFile;
 import org.citygml4j.tools.io.OutputFile;
 import org.citygml4j.tools.log.Logger;
+import org.citygml4j.xml.reader.FeatureInfo;
 import org.xmlobjects.gml.model.base.AbstractGML;
 import org.xmlobjects.gml.model.base.AbstractInlineOrByReferenceProperty;
 import org.xmlobjects.gml.model.base.AbstractReference;
@@ -57,6 +58,7 @@ public class MergeProcessor implements AutoCloseable {
     private String timeseriesDir = "merged_timeseries";
     private IdMode idMode = IdMode.KEEP_ALL;
     private int buckets = 10;
+    private String rootSrsName;
 
     private volatile boolean shouldProcess = true;
     private Exception exception;
@@ -128,6 +130,18 @@ public class MergeProcessor implements AutoCloseable {
         return this;
     }
 
+    public MergeProcessor withCityModelInfo(FeatureInfo cityModelInfo) {
+        if (cityModelInfo != null
+                && cityModelInfo.getBoundedBy() != null
+                && cityModelInfo.getBoundedBy().isSetEnvelope()) {
+            rootSrsName = cityModelInfo.getBoundedBy().getEnvelope().getSrsName();
+        } else {
+            rootSrsName = null;
+        }
+
+        return this;
+    }
+
     public void process(AbstractFeature feature, InputFile inputFile, Set<String> topLevelIds) throws ExecutionException {
         if (shouldProcess) {
             processor.process(feature, inputFile, topLevelIds);
@@ -186,6 +200,17 @@ public class MergeProcessor implements AutoCloseable {
             }
 
             super.visit(object);
+        }
+
+        @Override
+        public void visit(AbstractFeature feature) {
+            if (feature.getBoundedBy() != null
+                    && feature.getBoundedBy().isSetEnvelope()
+                    && feature.getBoundedBy().getEnvelope().getSrsName() == null) {
+                feature.getBoundedBy().getEnvelope().setSrsName(rootSrsName);
+            }
+
+            super.visit(feature);
         }
 
         @Override

@@ -129,6 +129,7 @@ public class MergeCommand extends CityGMLTool {
                 log.info("[" + (i + 1) + "|" + inputFiles.size() + "] Merging file " + inputFile + ".");
 
                 try (CityGMLReader reader = createCityGMLReader(in, inputFile, inputEncoding)) {
+                    processor.withCityModelInfo(getFeatureInfo(reader));
                     Set<String> topLevelIds = metadata.topLevelIds().getOrDefault(inputFile.toString(), Set.of());
                     while (reader.hasNext()) {
                         AbstractFeature feature = reader.next();
