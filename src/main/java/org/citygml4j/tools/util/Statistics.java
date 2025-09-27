@@ -394,7 +394,7 @@ public class Statistics {
             printer.accept("Extent: " + statistics.get("extent"));
         } else if (statistics.path("extents").isObject()) {
             ObjectNode extents = (ObjectNode) statistics.get("extents");
-            extents.fields().forEachRemaining(field -> printer.accept("Extent (\"" + field.getKey() + "\"): " +
+            extents.propertyStream().forEach(field -> printer.accept("Extent (\"" + field.getKey() + "\"): " +
                     field.getValue()));
         }
 
@@ -430,37 +430,37 @@ public class Statistics {
         if (statistics.path("modules").isObject()) {
             ObjectNode modules = (ObjectNode) statistics.get("modules");
             printer.accept("=== Modules ======================");
-            modules.fields().forEachRemaining(field -> printer.accept(field.getKey() + ": " + field.getValue()));
+            modules.propertyStream().forEach(field -> printer.accept(field.getKey() + ": " + field.getValue()));
         }
 
         if (statistics.path("ades").isObject()) {
             ObjectNode ades = (ObjectNode) statistics.get("ades");
             printer.accept("=== ADEs =========================");
-            ades.fields().forEachRemaining(field -> printer.accept(field.getKey() + ": " + field.getValue()));
+            ades.propertyStream().forEach(field -> printer.accept(field.getKey() + ": " + field.getValue()));
         }
 
         if (statistics.path("objectCount").isObject()) {
             ObjectNode objects = (ObjectNode) statistics.get("objectCount");
             printer.accept("=== Object count =================");
-            objects.fields().forEachRemaining(field -> printer.accept(field.getKey() + ": " + field.getValue()));
+            objects.propertyStream().forEach(field -> printer.accept(field.getKey() + ": " + field.getValue()));
         }
 
         if (statistics.path("geometryCount").isObject()) {
             ObjectNode geometries = (ObjectNode) statistics.get("geometryCount");
             printer.accept("=== Geometry count ===============");
-            geometries.fields().forEachRemaining(field -> printer.accept(field.getKey() + ": " + field.getValue()));
+            geometries.propertyStream().forEach(field -> printer.accept(field.getKey() + ": " + field.getValue()));
         }
 
         if (statistics.path("appearanceCount").isObject()) {
             ObjectNode appearances = (ObjectNode) statistics.get("appearanceCount");
             printer.accept("=== Appearance count =============");
-            appearances.fields().forEachRemaining(field -> printer.accept(field.getKey() + ": " + field.getValue()));
+            appearances.propertyStream().forEach(field -> printer.accept(field.getKey() + ": " + field.getValue()));
         }
 
         if (statistics.path("genericAttributes").isObject()) {
             ObjectNode attributes = (ObjectNode) statistics.get("genericAttributes");
             printer.accept("=== Generic attributes ===========");
-            attributes.fields().forEachRemaining(field -> printer.accept("\"" + (field.getKey()) + "\" (" +
+            attributes.propertyStream().forEach(field -> printer.accept("\"" + (field.getKey()) + "\" (" +
                     field.getValue().asText() + ")"));
         }
 
@@ -474,9 +474,9 @@ public class Statistics {
     }
 
     private void printHierarchies(JsonNode hierarchy, int level, Consumer<String> printer) {
-        if (hierarchy.fields().hasNext()) {
+        if (hierarchy.properties().iterator().hasNext()) {
             String indent = level > 0 ? "    ".repeat(level) : "";
-            Map.Entry<String, JsonNode> object = hierarchy.fields().next();
+            Map.Entry<String, JsonNode> object = hierarchy.properties().iterator().next();
             printer.accept(indent + "|-- " + object.getKey() + " (" + object.getValue() + ")");
             hierarchy.path("children").elements().forEachRemaining(child -> printHierarchies(child, level + 1, printer));
         }
