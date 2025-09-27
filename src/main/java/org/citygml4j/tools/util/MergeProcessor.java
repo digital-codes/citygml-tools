@@ -204,7 +204,8 @@ public class MergeProcessor implements AutoCloseable {
 
         @Override
         public void visit(AbstractFeature feature) {
-            if (feature.getBoundedBy() != null
+            if (rootSrsName != null
+                    && feature.getBoundedBy() != null
                     && feature.getBoundedBy().isSetEnvelope()
                     && feature.getBoundedBy().getEnvelope().getSrsName() == null) {
                 feature.getBoundedBy().getEnvelope().setSrsName(rootSrsName);

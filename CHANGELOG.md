@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- The `merge` command now assigns the `srsName` of the root envelope of an input file to all feature envelopes in the
+  same file that are missing a `srsName`, if `--compute-extent` is not specified on the command line. [#62](https://github.com/citygml4j/citygml-tools/issues/62)
+
 ## [2.4.0] - 2025-04-22
 
 ### Changed
