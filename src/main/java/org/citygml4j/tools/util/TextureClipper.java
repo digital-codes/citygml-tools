@@ -347,7 +347,7 @@ public class TextureClipper {
                 if (!forceJpeg && imageInfo.getFormat() == ImageFormats.TIFF) {
                     target = getTargetPath(source, "tif");
                     TiffImagingParameters parameters = new TiffImagingParameters();
-                    parameters.setCompression(TiffConstants.TIFF_COMPRESSION_UNCOMPRESSED);
+                    parameters.setCompression(TiffConstants.COMPRESSION_UNCOMPRESSED);
                     try (OutputStream stream = Files.newOutputStream(target)) {
                         new TiffImageParser().writeImage(clippedImage.image(), stream, parameters);
                     }
